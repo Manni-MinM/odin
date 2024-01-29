@@ -1,38 +1,35 @@
 package model
 
 import (
-	"time"
     "encoding/json"
 
     "github.com/Manni-MinM/odin/internal/database"
-
-	"github.com/go-redis/redis"
 )
 
 type ServerHealth struct {
-    ID              uint64      `json: "id"`
+    ID              string      `json: "id"`
     Address         string      `json: "address"`
     SuccessCount    uint64      `json: "success_count"`
     FailureCount    uint64      `json: "failure_count"`
-    LastFailure     time.Time   `json: "last_failure"`
-    CreatedAt       time.Time   `json: "created_at"`
+    LastFailure     *uint64     `json: "last_failure"`
+    CreatedAt       uint64      `json: "created_at"`
 }
 
 type ServerHealthRepo interface {
-    Create(*ServerHealth) error
+    Create(*ServerHealth) (error)
     GetAll() ([]ServerHealth, error)
-    GetByID(uint64) (ServerHealth, error)
+    GetByID(string) (ServerHealth, error)
 }
 
 type RedisServerHealthRepo struct {
     db  *database.RedisDB
 }
 
-func NewRedisServerHealthRepo(db *redis.Client) *RedisServerHealthRepo {
+func NewRedisServerHealthRepo(db *database.RedisDB) *RedisServerHealthRepo {
     return &RedisServerHealthRepo{db}
 }
 
-func (r *RedisServerHealthRepo) Create(sh *ServerHealth) error {
+func (r *RedisServerHealthRepo) Create(sh *ServerHealth) (error) {
     data, err := json.Marshal(sh)
 	if err != nil {
 		return err
@@ -45,32 +42,31 @@ func (r *RedisServerHealthRepo) Create(sh *ServerHealth) error {
     return err
 }
 
-func (r *RedisServerHealthRepo) GetAll() ([]ServerHealth, error) {
+func (r *RedisServerHealthRepo) GetAll() (map[string]ServerHealth, error) {
     values, err := r.db.GetAllValues()
     if err != nil {
-        return []ServerHealth{}, err
+        return map[string]ServerHealth{}, err
     }
 
-    serverHealthList := []ServerHealth{}
+    serverHealthMap := make(map[string]ServerHealth)
     for _, jsonString := range(values) {
         var sh ServerHealth
 
         err = json.Unmarshal([]byte(jsonString), &sh)
         if err != nil {
-            return []ServerHealth{}, err
+            return map[string]ServerHealth{}, err
         }
 
-        serverHealthList = append(serverHealthList, sh)
+        serverHealthMap[sh.ID] = sh
     }
 
-    return serverHealthList, nil
+    return serverHealthMap, nil
 }
 
-func (r *RedisServerHealthRepo) GetByID(id uint64) (ServerHealth, error) {
+func (r *RedisServerHealthRepo) GetByID(id string) (ServerHealth, error) {
     var sh ServerHealth
 
-    key := string(id)
-    jsonString, err := r.db.Get(key)
+    jsonString, err := r.db.Get(id)
     if err != nil {
         return ServerHealth{}, err
     }
