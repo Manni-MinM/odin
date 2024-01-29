@@ -52,7 +52,8 @@ func (h *ServerHealthHandler) Create(ctx echo.Context) error {
 func (h *ServerHealthHandler) GetAll(ctx echo.Context) error {
     serverHealthMap, err := h.repo.GetAll()
     if err != nil {
-        msg := map[string]string{"message": "Internal Server Error"}
+        msg := map[string]string{"message": err.Error()}
+        // msg := map[string]string{"message": "Internal Server Error"}
         return ctx.JSON(http.StatusInternalServerError, msg)
     }
 
@@ -66,8 +67,8 @@ func (h *ServerHealthHandler) GetAll(ctx echo.Context) error {
 
 
 func (h *ServerHealthHandler) Get(ctx echo.Context) error {
-    id, err := ctx.Param("id")
-    if err != nil {
+    id := ctx.Param("id")
+    if id == "" {
         return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Bad Request"})
     }
 

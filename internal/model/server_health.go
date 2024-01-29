@@ -17,7 +17,7 @@ type ServerHealth struct {
 
 type ServerHealthRepo interface {
     Create(*ServerHealth) (error)
-    GetAll() ([]ServerHealth, error)
+    GetAll() (map[string]ServerHealth, error)
     GetByID(string) (ServerHealth, error)
 }
 

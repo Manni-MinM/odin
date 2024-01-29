@@ -2,7 +2,6 @@ package database
 
 import (
     "fmt"
-    "context"
 
     "github.com/Manni-MinM/odin/internal/config"
 
@@ -13,17 +12,15 @@ type RedisDB struct {
     client    *redis.Client
 }
 
-func RedisConn(conf config.RedisConfig) (Database, error) {
-    addr := fmt.Sprintf("%v:%v", conf.Addr, conf.Port)
+func RedisConn(conf config.Redis) (*RedisDB, error) {
+    addr := fmt.Sprintf("%v:%v", conf.Host, conf.Port)
     client := redis.NewClient(&redis.Options{
         Addr: addr,
         Password: "",
         DB: 0,
     })
 
-    ctx := context.Background()
-
-    err := client.Ping(ctx).Err()
+    err := client.Ping().Err()
     if err != nil {
         return nil, err
     }
@@ -51,13 +48,16 @@ func (rdb *RedisDB) GetAllValues() ([]string, error) {
 		return nil, err
 	}
 
-	return values, nil
+    valueList := []string{}
+    for _, val := range(values) {
+        valueList = append(valueList, val.(string))
+	}
+
+	return valueList, nil
 }
 
 func (rdb *RedisDB) Get(key string) (string, error) {
-    ctx := context.Background()
-
-    val, err := rdb.client.Get(ctx, key).Result()
+    val, err := rdb.client.Get(key).Result()
     if err == redis.Nil || err != nil {
         return "", err
     }
@@ -66,9 +66,7 @@ func (rdb *RedisDB) Get(key string) (string, error) {
 }
 
 func (rdb *RedisDB) Set(key string, val string) (string, error) {
-    ctx := context.Background()
-
-    err := rdb.client.Set(ctx, key, val, 0).Err()
+    err := rdb.client.Set(key, val, 0).Err()
     if err == redis.Nil || err != nil {
         return "", err
     }
