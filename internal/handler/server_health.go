@@ -3,14 +3,16 @@ package handler
 import (
 	"time"
 	"net/http"
-    "encoding/json"
 
 	"github.com/Manni-MinM/odin/internal/model"
-	"github.com/Manni-MinM/odin/internal/request"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
+
+type ServerHealthRequest struct {
+    Address     string      `json:"address"`
+}
 
 type ServerHealthHandler struct {
     repo     model.ServerHealthRepo
@@ -21,7 +23,7 @@ func NewHTTPServerHealthHandler(r model.ServerHealthRepo) *ServerHealthHandler {
 }
 
 func (h *ServerHealthHandler) Create(ctx echo.Context) error {
-    var req request.ServerHealth
+    var req ServerHealthRequest
 
     if err := ctx.Bind(&req); err != nil {
         return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Bad Request"})
@@ -41,33 +43,22 @@ func (h *ServerHealthHandler) Create(ctx echo.Context) error {
         return ctx.JSON(http.StatusInternalServerError, msg)
     }
 
-    resp, err := json.Marshal(sh)
-	if err != nil {
-		return err
-	}
-
-    return ctx.JSON(http.StatusCreated, resp)
+    return ctx.JSON(http.StatusCreated, sh.ID)
 }
 
 func (h *ServerHealthHandler) GetAll(ctx echo.Context) error {
     serverHealthMap, err := h.repo.GetAll()
     if err != nil {
-        msg := map[string]string{"message": err.Error()}
-        // msg := map[string]string{"message": "Internal Server Error"}
+        msg := map[string]string{"message": "Internal Server Error"}
         return ctx.JSON(http.StatusInternalServerError, msg)
     }
 
-    resp, err := json.Marshal(serverHealthMap)
-	if err != nil {
-		return err
-	}
-
-    return ctx.JSON(http.StatusOK, resp)
+    return ctx.JSON(http.StatusOK, serverHealthMap)
 }
 
 
 func (h *ServerHealthHandler) Get(ctx echo.Context) error {
-    id := ctx.Param("id")
+    id := ctx.QueryParam("id")
     if id == "" {
         return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Bad Request"})
     }
@@ -78,10 +69,5 @@ func (h *ServerHealthHandler) Get(ctx echo.Context) error {
         return ctx.JSON(http.StatusInternalServerError, msg)
     }
 
-    resp, err := json.Marshal(sh)
-	if err != nil {
-		return err
-	}
-
-    return ctx.JSON(http.StatusOK, resp)
+    return ctx.JSON(http.StatusOK, sh)
 }

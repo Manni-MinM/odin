@@ -43,6 +43,10 @@ func (rdb *RedisDB) GetAllValues() ([]string, error) {
 		return nil, err
 	}
 
+    if len(keys) == 0 {
+        return []string{}, nil
+    }
+
 	values, err := rdb.client.MGet(keys...).Result()
 	if err != nil {
 		return nil, err

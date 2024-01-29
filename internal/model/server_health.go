@@ -7,12 +7,12 @@ import (
 )
 
 type ServerHealth struct {
-    ID              string      `json: "id"`
-    Address         string      `json: "address"`
-    SuccessCount    uint64      `json: "success_count"`
-    FailureCount    uint64      `json: "failure_count"`
-    LastFailure     *uint64     `json: "last_failure"`
-    CreatedAt       uint64      `json: "created_at"`
+    ID              string      `json:"id"`
+    Address         string      `json:"address"`
+    SuccessCount    uint64      `json:"success_count"`
+    FailureCount    uint64      `json:"failure_count"`
+    LastFailure     *uint64     `json:"last_failure"`
+    CreatedAt       uint64      `json:"created_at"`
 }
 
 type ServerHealthRepo interface {
