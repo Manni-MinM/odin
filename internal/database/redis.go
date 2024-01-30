@@ -16,8 +16,8 @@ func RedisConn(conf config.Redis) (*RedisDB, error) {
     addr := fmt.Sprintf("%v:%v", conf.Host, conf.Port)
     client := redis.NewClient(&redis.Options{
         Addr: addr,
-        Password: "",
-        DB: 0,
+        Password: conf.Password,
+        DB: conf.DBName,
     })
 
     err := client.Ping().Err()

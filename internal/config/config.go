@@ -22,8 +22,8 @@ type (
     Redis struct {
         Host            string          `mapstructure:"host"`
         Port            int             `mapstructure:"port"`
-        Password        string          `mapstructure:"password"`
-        DBName          string          `mapstructure:"dbname"`
+        DBName          int             `mapstructure:"dbname"`
+        Password        string
     }
 
     HealthCheck struct {
@@ -53,6 +53,11 @@ func Load() (*Config, error) {
 	if err != nil {
 		return &Config{}, err
 	}
+
+    viper.AutomaticEnv()
+
+    conf.API.Redis.Password = viper.GetString("REDIS_PASSWORD")
+    conf.HealthCheck.Redis.Password = viper.GetString("REDIS_PASSWORD")
 
 	return &conf, nil
 }
