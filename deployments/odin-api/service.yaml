@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: odin-api
+spec:
+  selector:
+    app: odin-api
+  ports:
+    - protocol: TCP
+      port: 8000
