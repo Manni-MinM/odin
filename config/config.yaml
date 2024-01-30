@@ -3,11 +3,18 @@ api:
     port: 8000
 
   redis:
-    host: redis
+    host: localhost #redis
     port: 6379
     password: ""
     dbname: 0
 
 healthcheck:
-  timeout: 5
-  cron: "*/5 * * * * *"
+  cron:
+    timeout: 5
+    pattern: "*/5 * * * * *"
+
+  redis:
+    host: localhost #redis
+    port: 6379
+    password: ""
+    dbname: 0

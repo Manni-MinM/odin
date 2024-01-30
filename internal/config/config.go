@@ -27,8 +27,14 @@ type (
     }
 
     HealthCheck struct {
-        Timeout         int          `mapstructure:"timeout"`
-        Cron            string          `mapstructure:"cron"`
+        Redis           Redis           `mapstructure:"redis"`
+        Cron            Cron            `mapstructure:"cron"`
+
+    }
+
+    Cron struct {
+        Timeout         int             `mapstructure:"timeout"`
+        Pattern         string          `mapstructure:"pattern"`
     }
 )
 

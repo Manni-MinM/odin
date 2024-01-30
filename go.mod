@@ -6,6 +6,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.4.0
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.18.2
 )
 
