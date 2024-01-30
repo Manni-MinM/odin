@@ -1,6 +1,7 @@
 package model
 
 import (
+    "time"
     "encoding/json"
 
     "github.com/Manni-MinM/odin/internal/database"
@@ -19,6 +20,8 @@ type ServerHealthRepo interface {
     Create(*ServerHealth) (error)
     GetAll() (map[string]ServerHealth, error)
     GetByID(string) (ServerHealth, error)
+    IncrementSuccessByID(string) (error)
+    IncrementFailureByID(string) (error)
 }
 
 type RedisServerHealthRepo struct {
@@ -77,4 +80,29 @@ func (r *RedisServerHealthRepo) GetByID(id string) (ServerHealth, error) {
     }
 
     return sh, nil
+}
+
+func (r *RedisServerHealthRepo) IncrementSuccessByID(id string) error {
+    sh, err := r.GetByID(id)
+    if err != nil {
+        return err
+    }
+
+    sh.SuccessCount += 1
+
+    return r.Create(&sh)
+}
+
+func (r *RedisServerHealthRepo) IncrementFailureByID(id string) error {
+    sh, err := r.GetByID(id)
+    if err != nil {
+        return err
+    }
+
+    sh.FailureCount += 1
+
+    timeNow := uint64(time.Now().Unix())
+    sh.LastFailure = &timeNow
+
+    return r.Create(&sh)
 }
