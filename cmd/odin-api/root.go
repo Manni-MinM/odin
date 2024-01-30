@@ -23,7 +23,9 @@ func main() {
         srv.Logger.Fatal(err)
     }
 
-    db, err := database.RedisConn(conf.Redis)
+    apiConf := conf.API
+
+    db, err := database.RedisConn(apiConf.Redis)
     if err != nil {
         srv.Logger.Fatal(err)
     }
@@ -36,7 +38,7 @@ func main() {
     api.GET("/server/", serverHealthHandler.Get)
     api.GET("/server/all/", serverHealthHandler.GetAll)
 
-    srvConf := conf.Server
+    srvConf := apiConf.Server
     srvAddr := fmt.Sprintf(":%v", srvConf.Port)
 
     err = srv.Start(srvAddr)

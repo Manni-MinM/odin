@@ -1,8 +1,13 @@
-server:
-  port: 8000
+api:
+  server:
+    port: 8000
 
-redis:
-  host: redis
-  port: 6379
-  password: ""
-  dbname: 0
+  redis:
+    host: redis
+    port: 6379
+    password: ""
+    dbname: 0
+
+healthcheck:
+  timeout: 5
+  cron: "*/5 * * * * *"

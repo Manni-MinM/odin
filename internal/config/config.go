@@ -6,19 +6,29 @@ import (
 
 type (
     Config struct {
-        Server      Server      `mapstructure:"server"`
-        Redis       Redis       `mapstructure:"redis"`
+        API             API             `mapstructure:"api"`
+        HealthCheck     HealthCheck     `mapstructure:"healthcheck"`
+    }
+
+    API struct {
+        Server          Server          `mapstructure:"server"`
+        Redis           Redis           `mapstructure:"redis"`
     }
 
     Server struct {
-        Port        int         `mapstructure:"port"`
+        Port            int             `mapstructure:"port"`
     }
 
     Redis struct {
-        Host        string      `mapstructure:"host"`
-        Port        int         `mapstructure:"port"`
-        Password    string      `mapstructure:"password"`
-        DBName      string      `mapstructure:"dbname"`
+        Host            string          `mapstructure:"host"`
+        Port            int             `mapstructure:"port"`
+        Password        string          `mapstructure:"password"`
+        DBName          string          `mapstructure:"dbname"`
+    }
+
+    HealthCheck struct {
+        Timeout         int          `mapstructure:"timeout"`
+        Cron            string          `mapstructure:"cron"`
     }
 )
 
