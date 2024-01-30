@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odin-healthcheck
+  labels:
+    app: odin-healthcheck
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odin-healthcheck
+  template:
+    metadata:
+      labels:
+        app: odin-healthcheck
+    spec:
+      containers:
+        - name: odin-healthcheck
+          image: minm47/odin-healthcheck:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: config-volume
+            mountPath: /app/config
+          env:
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: odin-redis
+                key: redis-password
+      volumes:
+        - name: config-volume
+          configMap:
+            name: odin-healthcheck-config
+            items:
+            - key: config.yaml
+              path: config.yaml
