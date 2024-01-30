@@ -12,5 +12,14 @@ services:
     depends_on:
       - redis
 
+  odin-healthcheck:
+    build:
+      context: ../
+      dockerfile: ./build/healthcheck/Dockerfile
+    volumes:
+      - ../config:/app/config
+    depends_on:
+      - redis
+
   redis:
     image: redis:latest
