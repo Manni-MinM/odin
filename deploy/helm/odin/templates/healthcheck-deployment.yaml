@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-healthcheck" (include "odin.fullname" .) }}
+  labels:
+    app.kubernetes.io/name: {{ printf "%s-healthcheck" (include "odin.name" .) }}
+    {{- include "odin.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.healthcheck.autoscaling.enabled }}
+  replicas: {{ .Values.healthcheck.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ printf "%s-healthcheck" (include "odin.name" .) }}
+      {{- include "odin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.healthcheck.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ printf "%s-healthcheck" (include "odin.name" .) }}
+        {{- include "odin.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.healthcheck.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "odin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.healthcheck.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.healthcheck.securityContext | nindent 12 }}
+          image: "{{ .Values.healthcheck.image.repository }}:{{ .Values.healthcheck.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.healthcheck.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.healthcheck.resources | nindent 12 }}
+      {{- with .Values.healthcheck.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.healthcheck.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.healthcheck.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
