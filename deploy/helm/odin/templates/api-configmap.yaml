@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-api-config" (include "odin.fullname" .) }}
+  labels:
+    app.kubernetes.io/name: {{ printf "%s-api" (include "odin.name" .) }}
+    {{- include "odin.labels" . | nindent 4 }}
+data:
+  config.yaml: |+
+    api:
+      server:
+        port: {{ .Values.api.service.port }}
+      redis:
+        host: {{ printf "%s-redis-master" (include "odin.fullname" .) }}
+        port: {{ .Values.redis.master.service.ports.redis }}
+        dbname: {{ .Values.redis.dbname }}

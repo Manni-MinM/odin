@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-healthcheck-config" (include "odin.fullname" .) }}
+  labels:
+    app.kubernetes.io/name: {{ printf "%s-healthcheck" (include "odin.name" .) }}
+    {{- include "odin.labels" . | nindent 4 }}
+data:
+  config.yaml: |+
+    healthcheck:
+      cron:
+        timeout: 5
+        pattern: "0 * * * * *"
+      redis:
+        host: {{ printf "%s-redis-master" (include "odin.fullname" .) }}
+        port: {{ .Values.redis.master.service.ports.redis }}
+        dbname: {{ .Values.redis.dbname }}
