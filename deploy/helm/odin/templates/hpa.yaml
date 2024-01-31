@@ -1,5 +1,5 @@
 {{- if .Values.api.autoscaling.enabled }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "odin.fullname" . }}
@@ -14,16 +14,20 @@ spec:
   minReplicas: {{ .Values.api.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.api.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.api.autoscaling.targetCPUUtilizationPercentage }}
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: {{ .Values.api.autoscaling.targetCPUUtilizationPercentage }}
-    {{- end }}
+{{/*    {{- if .Values.api.autoscaling.targetCPUUtilizationPercentage }}*/}}
+{{/*    - type: Resource*/}}
+{{/*      resource:*/}}
+{{/*        name: cpu*/}}
+{{/*        target:*/}}
+{{/*          type: Utilization*/}}
+{{/*          averageUtilization: {{ .Values.api.autoscaling.targetCPUUtilizationPercentage }}*/}}
+{{/*    {{- end }}*/}}
     {{- if .Values.api.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: {{ .Values.api.autoscaling.targetMemoryUtilizationPercentage }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.api.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}

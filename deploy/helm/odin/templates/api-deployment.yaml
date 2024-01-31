@@ -46,14 +46,14 @@ spec:
           env:
           - name: REDIS_PASSWORD
             value: {{ .Values.redis.auth.password }}
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /api/server/all/
+              port: 8000
+          readinessProbe:
+             httpGet:
+              path: /api/server/all/
+              port: 8000
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
       volumes:
