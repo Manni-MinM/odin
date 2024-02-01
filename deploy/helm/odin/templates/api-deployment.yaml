@@ -40,6 +40,11 @@ spec:
             - name: http
               containerPort: {{ .Values.api.service.port }}
               protocol: TCP
+            {{- if .Values.api.prometheus.enabled }}
+            - name: prom
+              containerPort: {{ .Values.api.prometheus.port }}
+              protocol: TCP
+            {{- end }}
           volumeMounts:
           - name: config-volume
             mountPath: /app/config
@@ -51,11 +56,11 @@ spec:
             failureThreshold: 3
             httpGet:
               path: /api/server/all/
-              port: 8000
+              port: {{ .Values.api.service.port }}
           readinessProbe:
             httpGet:
               path: /api/server/all/
-              port: 8000
+              port: {{ .Values.api.service.port }}
             initialDelaySeconds: 5
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}

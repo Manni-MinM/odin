@@ -32,6 +32,10 @@ api:
     # runAsNonRoot: true
     # runAsUser: 1000
 
+  prometheus:
+    enabled: true
+    port: 9000
+
   service:
     type: ClusterIP
     port: 8000

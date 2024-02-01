@@ -41,5 +41,5 @@ func StartPrometheusServer() {
 	}
 
 	http.Handle("/metrics", promhttp.Handler())
-	fmt.Println(http.ListenAndServe(fmt.Sprintf(":%d", internalPrometheusPort), nil))
+	fmt.Println(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", internalPrometheusPort), nil))
 }

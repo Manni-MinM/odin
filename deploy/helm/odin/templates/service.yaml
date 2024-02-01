@@ -12,6 +12,12 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- if .Values.api.prometheus.enabled }}
+    - port: {{ .Values.api.prometheus.port }}
+      targetPort: 9000
+      protocol: TCP
+      name: prom
+    {{- end }}
   selector:
     app.kubernetes.io/name: {{ printf "%s-api" (include "odin.name" .) }}
     {{- include "odin.selectorLabels" . | nindent 4 }}

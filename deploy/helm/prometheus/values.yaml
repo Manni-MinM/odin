@@ -762,7 +762,7 @@ serverFiles:
       - job_name: odin-api
         metrics_path: /metrics
         static_configs:
-          - targets: ["odin-api:9000"]
+          - targets: ["my-odin:9000"]
 
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
       # This uses separate scrape configs for cluster components (i.e. API server, node)
